@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogorodsk RP | Recruitment Portal</title>
+    <style>
+        :root {
+            --accent-blue: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --bg-gradient: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --input-bg: rgba(15, 23, 42, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-portal {
+            width: 100%;
+            max-width: 850px;
+            backdrop-filter: blur(10px);
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header {
+            font-size: 18px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding-bottom: 10px;
+            margin: 40px 0 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header::before {
+            content: ' ';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            margin-right: 15px;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 14px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-glow);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        textarea { min-height: 100px; resize: vertical; }
+
+        .btn-send {
+            width: 100%;
+            padding: 18px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            box-shadow: 0 10px 20px -5px var(--accent-glow);
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        .success-box {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            border: 1px solid #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 20px;
+        }
+
+        .success-box h2 { color: #10b981; }
+
+        @media (max-width: 600px) {
+            .grid-row { grid-template-columns: 1fr; }
+            .main-portal { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-portal">
+    <div id="formContainer">
+        <header>
+            <h1>BOGORODSK ROLEPLAY</h1>
+            <p style="color: #94a3b8;">Подача анкеты в состав Администрации Проекта</p>
+        </header>
+
+        <form id="recruitmentForm">
+            <div class="section-header">1. Личная информация</div>
+            
+            <div class="form-group">
+                <label>Укажите ваше реальное имя.</label>
+                <input type="text" id="name" placeholder="Иван" required>
+            </div>
+
+            <div class="grid-row">
+                <div class="form-group">
+                    <label>Укажите ваш реальный возраст (14+).</label>
+                    <input type="number" id="age" min="14" placeholder="14" required>
+                </div>
+                <div class="form-group">
+                    <label>Username Discord</label>
+                    <input type="text" id="discord" placeholder="nick" required>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div class="form-group">
+                    <label>Укажите ваш юзернейм для связи в Telegram.</label>
+                    <input type="text" id="telegram" placeholder="@nick" required>
+                </div>
+                <div class="form-group">
+                    <label>Укажите ваш часовой пояс.</label>
+                    <input type="text" id="timezone" placeholder="МСК +0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Имеете ли вы опыт в данной сфере, если да, то укажите где.</label>
+                <textarea id="experience" placeholder="Ваш ответ..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Напишите автобиографию примерно в трёх предложениях.</label>
+                <textarea id="bio" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="section-header">2. Проверка знаний и ответственности</div>
+
+            <div class="form-group">
+                <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
+                <textarea id="case1" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
+                <textarea id="case2" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Что означает термин MassDM? Приведите пример такой ситуации.</label>
+                <textarea id="case3" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label>
+                <textarea id="case4" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label>
+                <textarea id="case5" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>К вам обратились с жалобой на действия сотрудника МВД в игре. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
+                <textarea id="case6" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label>
+                <textarea id="case7" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>В ходе RP-ситуации игрок 1 не выполнил обязательную отыгровку взятия в наручники. Игрок 2 указал на это нарушение и обвинил игрока 1 в НРП-поведении. В ответ игрок 1 настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label>
+                <textarea id="case8" placeholder="Ваш ответ..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
+                <select id="responsibility" required>
+                    <option value="" disabled selected>Выберите ответ</option>
+                    <option value="Да, полностью понимаю">Да, полностью понимаю</option>
+                    <option value="Ознакомлен и согласен">Ознакомлен и согласен</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-send" id="submitBtn">Отправить анкету</button>
+        </form>
+    </div>
+
+    <div id="successBox" class="success-box">
+        <h2>АНКЕТА ОТПРАВЛЕНА</h2>
+        <p>Ваши данные успешно переданы высшей администрации проекта. Ожидайте ответа в ближайшее время.</p>
+    </div>
+</div>
+
+<script>
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV";
+
+    document.getElementById('recruitmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "ОТПРАВКА...";
+
+        const payload = {
+            embeds: [{
+                title: "『НОВАЯ ЗАЯВКА В СОСТАВ』",
+                color: 3899382,
+                fields: [
+                    { name: "┌⊳︱Имя", value: document.getElementById('name').value, inline: true },
+                    { name: "├⊳︱Возраст", value: document.getElementById('age').value, inline: true },
+                    { name: "├⊳︱Discord", value: document.getElementById('discord').value, inline: true },
+                    { name: "├⊳︱Telegram", value: document.getElementById('telegram').value, inline: true },
+                    { name: "├⊳︱Пояс", value: document.getElementById('timezone').value, inline: true },
+                    { name: "├⊳︱Биография", value: document.getElementById('bio').value },
+                    { name: "├⊳︱Национализм", value: document.getElementById('case1').value },
+                    { name: "├⊳︱OOC/IC", value: document.getElementById('case2').value },
+                    { name: "├⊳︱MassDM", value: document.getElementById('case3').value },
+                    { name: "├⊳︱RP Kill", value: document.getElementById('case4').value },
+                    { name: "├⊳︱RevengeKill", value: document.getElementById('case5').value },
+                    { name: "├⊳︱МВД Кейс", value: document.getElementById('case6').value },
+                    { name: "├⊳︱OOC Логика", value: document.getElementById('case7').value },
+                    { name: "├⊳︱Наручники", value: document.getElementById('case8').value },
+                    { name: "└⊳︱Ответственность", value: document.getElementById('responsibility').value }
+                ],
+                footer: { text: "Bogorodsk RP Recruitment System" },
+                timestamp: new Date()
+            }]
+        };
+
+        fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('successBox').style.display = 'block';
+            window.scrollTo(0,0);
+        }).catch(() => {
+            alert("Ошибка сети. Повторите попытку.");
+            btn.disabled = false;
+            btn.innerText = "Отправить анкету";
+        });
+    });
+</script>
+
+</body>
+</html>
