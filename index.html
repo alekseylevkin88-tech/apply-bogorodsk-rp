@@ -15,6 +15,11 @@
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; }
         input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; }
+        
+        /* Исправление цвета выпадающего списка */
+        select option { background: #fff; color: #000; }
+        input[readonly] { background: rgba(255,255,255,0.1); color: #94a3b8; cursor: not-allowed; }
+
         textarea { resize: vertical; min-height: 100px; }
         .submit-btn { width: 100%; padding: 18px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
         .submit-btn:hover { background: #2563eb; transform: translateY(-2px); }
@@ -55,7 +60,7 @@
 
             <div class="form-group">
                 <label>Укажите ваш юзернейм в Discord.</label>
-                <input type="text" id="discord" required placeholder="username">
+                <input type="text" id="discord" required readonly>
             </div>
 
             <div class="form-group">
@@ -151,6 +156,10 @@
 
             document.getElementById('main-content').classList.remove('hidden');
             const meta = user.user_metadata;
+            
+            // Автозаполнение поля Discord
+            document.getElementById('discord').value = meta.full_name || meta.custom_claims?.global_name || "Не определен";
+
             document.getElementById('user-info').innerHTML = `
                 <img src="${meta.avatar_url}" class="avatar">
                 <div>
@@ -179,14 +188,14 @@
                         { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
                         { name: "Опыт", value: document.getElementById('experience').value },
                         { name: "Автобиография", value: document.getElementById('bio').value },
-                        { name: "1. Ситуация с оском", value: document.getElementById('q1').value },
-                        { name: "2. OOC и IC информация", value: document.getElementById('q2').value },
-                        { name: "3. Термин MassDM", value: document.getElementById('q3').value },
-                        { name: "4. RolePlay убийство", value: document.getElementById('q4').value },
-                        { name: "5. Ситуация RevengeKill", value: document.getElementById('q5').value },
-                        { name: "6. Процесс расследования жалобы", value: document.getElementById('q6').value },
-                        { name: "7. Порядок расследования (OOC)", value: document.getElementById('q7').value },
-                        { name: "8. МВД и наручники (НРП)", value: document.getElementById('q8').value },
+                        { name: "Ситуация с оском", value: document.getElementById('q1').value },
+                        { name: "OOC и IC информация", value: document.getElementById('q2').value },
+                        { name: "Термин MassDM", value: document.getElementById('q3').value },
+                        { name: "RolePlay убийство", value: document.getElementById('q4').value },
+                        { name: "Ситуация RevengeKill", value: document.getElementById('q5').value },
+                        { name: "Процесс расследования жалобы", value: document.getElementById('q6').value },
+                        { name: "Порядок расследования (OOC)", value: document.getElementById('q7').value },
+                        { name: "МВД и наручники (НРП)", value: document.getElementById('q8').value },
                         { name: "Ответственность", value: document.getElementById('responsibility').value }
                     ],
                     footer: { text: `Отправил: ${meta.full_name} | ID: ${user.identities[0].id}` },
@@ -202,6 +211,8 @@
                     if (!res.ok) throw new Error("Ошибка вебхука");
                     alert("Анкета успешно отправлена!");
                     e.target.reset();
+                    // После сброса возвращаем ник
+                    document.getElementById('discord').value = meta.full_name;
                 } catch (err) {
                     alert("Ошибка: " + err.message);
                 } finally {
