@@ -209,7 +209,7 @@
                         body: JSON.stringify({ embeds: [embed] })
                     });
                     if (!res.ok) throw new Error("Ошибка вебхука");
-                    alert("Анкета успешно отправлена!");
+                    alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
                     e.target.reset();
                     // После сброса возвращаем ник
                     document.getElementById('discord').value = meta.full_name;
@@ -231,3 +231,4 @@
 </script>
 </body>
 </html>
+
