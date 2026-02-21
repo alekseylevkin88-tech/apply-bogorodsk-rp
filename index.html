@@ -50,11 +50,12 @@
         .section-title {
             color: var(--header-blue);
             font-size: 20px;
-            margin: 30px 0 20px 0;
+            margin: 40px 0 25px 0;
             text-transform: uppercase;
             letter-spacing: 2px;
             border-bottom: 1px solid rgba(58, 134, 255, 0.3);
             padding-bottom: 10px;
+            width: 100%;
         }
 
         .form-container {
@@ -64,21 +65,21 @@
             border-radius: 30px;
             padding: 40px;
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 12px;
+            font-size: 15px;
             font-weight: 600;
-            color: #94a3b8;
-            line-height: 1.4;
+            color: #cbd5e1;
+            line-height: 1.5;
         }
 
         input, textarea, select {
@@ -98,9 +99,10 @@
             outline: none;
             border-color: var(--header-blue);
             background: rgba(58, 134, 255, 0.1);
+            box-shadow: 0 0 15px rgba(58, 134, 255, 0.1);
         }
 
-        textarea { resize: vertical; min-height: 100px; }
+        textarea { resize: vertical; min-height: 110px; }
 
         .submit-btn {
             width: 100%;
@@ -115,27 +117,36 @@
             letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.4s ease;
+            margin-top: 20px;
         }
 
         .submit-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(58, 134, 255, 0.4);
+            filter: brightness(1.1);
         }
 
         .bottom-nav {
             position: fixed;
-            bottom: 20px;
-            background: rgba(15, 23, 42, 0.9);
+            bottom: 25px;
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(58, 134, 255, 0.3);
-            padding: 12px 30px;
+            padding: 14px 35px;
             border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
             text-decoration: none;
             color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .bottom-nav:hover {
+            transform: translateY(-5px);
+            border-color: var(--header-blue);
         }
 
         select option { background: #0a1120; }
@@ -148,32 +159,32 @@
     </div>
 
     <div class="form-container">
-        <form id="megaForm">
+        <form id="fullAdminForm">
             
             <div class="section-title">1. Личная информация</div>
             
             <div class="form-group">
-                <label>Ваше реальное имя</label>
-                <input type="text" id="realName" required placeholder="Иван">
+                <label>Укажите ваше реальное имя.</label>
+                <input type="text" id="realName" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
-                <label>Ваш реальный возраст (14+)</label>
-                <input type="number" id="age" min="1" required placeholder="14">
+                <label>Укажите ваш реальный возраст (14+).</label>
+                <input type="number" id="age" min="1" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
-                <label>Ваш юзернейм в Discord</label>
+                <label>Укажите ваш юзернейм в Discord.</label>
                 <input type="text" id="discord" required placeholder="username">
             </div>
 
             <div class="form-group">
-                <label>Ваш юзернейм для связи в Telegram</label>
+                <label>Укажите ваш юзернейм для связи в Telegram.</label>
                 <input type="text" id="telegram" required placeholder="@username">
             </div>
 
             <div class="form-group">
-                <label>Ваш часовой пояс</label>
+                <label>Укажите ваш часовой пояс.</label>
                 <input type="text" id="timezone" required placeholder="МСК +0">
             </div>
 
@@ -187,45 +198,45 @@
                 <textarea id="bio" required placeholder="Ваш ответ..."></textarea>
             </div>
 
-            <div class="section-title">2. Проверка знаний</div>
+            <div class="section-title">2. Проверка знаний и ответственности</div>
 
             <div class="form-group">
-                <label>Вы как администратор заметили игрока, оскорбляющего другого по национальному признаку. Что сделаете?</label>
+                <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
                 <textarea id="q1" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Что такое OOC и IC информация? Приведите примеры.</label>
+                <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
                 <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Что означает термин MassDM? Приведите пример.</label>
+                <label>Что означает термин MassDM? Приведите пример такой ситуации.</label>
                 <textarea id="q3" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного?</label>
+                <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label>
                 <textarea id="q4" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Опишите ситуацию RevengeKill. Как следует поступить?</label>
+                <label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label>
                 <textarea id="q5" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Жалоба на сотрудника МВД. Опишите процесс вашего расследования.</label>
+                <label>К вам обратились с жалобой на общение игрока в игре. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
                 <textarea id="q6" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Жалоба на нарушение правил. Опишите порядок принятия решения OOC-администратором.</label>
+                <label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label>
                 <textarea id="q7" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
-                <label>Конфликт с отыгровкой наручников. Как должен действовать администратор?</label>
+                <label>В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label>
                 <textarea id="q8" required placeholder="Ваш ответ..."></textarea>
             </div>
 
@@ -243,36 +254,36 @@
     </div>
 
     <a href="https://alekseylevkin88-tech.github.io/staff-bogorodsk-roleplay/" class="bottom-nav">
-        <span>← Команда Проекта</span>
+        ← Команда Проекта
     </a>
 
     <script>
-        document.getElementById('megaForm').addEventListener('submit', function(e) {
+        document.getElementById('fullAdminForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const webhookUrl = "https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV";
 
             const data = {
                 embeds: [{
-                    title: "🔥 НОВАЯ АНКЕТА (ПОЛНАЯ ФОРМА)",
+                    title: "НОВАЯ ЗАЯВКА В АДМИНИСТРАЦИЮ",
                     color: 3835647,
                     fields: [
-                        { name: "┌⊳︱Имя/Возраст", value: `${document.getElementById('realName').value} (${document.getElementById('age').value} лет)`, inline: true },
-                        { name: "├⊳︱Discord/TG", value: `DS: ${document.getElementById('discord').value}\nTG: ${document.getElementById('telegram').value}`, inline: true },
-                        { name: "├⊳︱Пояс", value: document.getElementById('timezone').value, inline: true },
-                        { name: "├⊳︱Опыт", value: document.getElementById('experience').value },
-                        { name: "├⊳︱Биография", value: document.getElementById('bio').value },
-                        { name: "├⊳︱Розжиг межнац", value: document.getElementById('q1').value },
-                        { name: "├⊳︱IC/OOC", value: document.getElementById('q2').value },
-                        { name: "├⊳︱MassDM", value: document.getElementById('q3').value },
-                        { name: "├⊳︱RP Kill", value: document.getElementById('q4').value },
-                        { name: "├⊳︱RevengeKill", value: document.getElementById('q5').value },
-                        { name: "├⊳︱Ситуация с МВД", value: document.getElementById('q6').value },
-                        { name: "├⊳︱Нарушение/Решение", value: document.getElementById('q7').value },
-                        { name: "├⊳︱Ситуация с наручниками", value: document.getElementById('q8').value },
-                        { name: "├⊳︱Ответственность", value: document.getElementById('responsibility').value }
+                        { name: "1. Имя / Возраст", value: `Имя: ${document.getElementById('realName').value}\nВозраст: ${document.getElementById('age').value}`, inline: true },
+                        { name: "2. Контакты", value: `DS: ${document.getElementById('discord').value}\nTG: ${document.getElementById('telegram').value}`, inline: true },
+                        { name: "3. Часовой пояс", value: document.getElementById('timezone').value, inline: true },
+                        { name: "4. Опыт в сфере", value: document.getElementById('experience').value },
+                        { name: "5. Автобиография", value: document.getElementById('bio').value },
+                        { name: "6. Ситуация: Оскорбление по нац. признаку", value: document.getElementById('q1').value },
+                        { name: "7. Определения OOC / IC", value: document.getElementById('q2').value },
+                        { name: "8. Определение MassDM", value: document.getElementById('q3').value },
+                        { name: "9. RolePlay убийство", value: document.getElementById('q4').value },
+                        { name: "10. Ситуация RevengeKill", value: document.getElementById('q5').value },
+                        { name: "11. Жалоба на общение игрока", value: document.getElementById('q6').value },
+                        { name: "12. Расследование нарушения правил", value: document.getElementById('q7').value },
+                        { name: "13. Конфликт с сотрудником МВД", value: document.getElementById('q8').value },
+                        { name: "14. Ответственность", value: document.getElementById('responsibility').value }
                     ],
-                    footer: { text: "Bogorodsk RP Administration System" },
+                    footer: { text: "Bogorodsk RP | Система заявок" },
                     timestamp: new Date()
                 }]
             };
@@ -285,11 +296,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             }).then(() => {
-                alert("Ваша анкета успешно отправлена!");
+                alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
                 btn.innerText = "ОТПРАВЛЕНО";
-                document.getElementById('megaForm').reset();
+                document.getElementById('fullAdminForm').reset();
             }).catch(() => {
-                alert("Ошибка! Проверьте интернет.");
+                alert("Ошибка при отправке! Проверьте соединение.");
                 btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
                 btn.disabled = false;
             });
