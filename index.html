@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bogorodsk RP | Анкета Администратора</title>
+    <title>Bogorodsk RP | Анкета в Администрацию</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --accent: #3a86ff; --bg: #0a1120; --card: #161f32; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f8fafc; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
         .container { width: 100%; max-width: 800px; }
-        
         .user-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border: 1px solid rgba(58, 134, 255, 0.3); }
         .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); }
-        
         .section-title { font-size: 20px; font-weight: bold; color: var(--accent); margin: 30px 0 15px; border-left: 4px solid var(--accent); padding-left: 15px; }
-        
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; }
         input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; }
         textarea { resize: vertical; min-height: 100px; }
-        input:focus, textarea:focus { border-color: var(--accent); outline: none; background: rgba(255,255,255,0.08); }
-
         .submit-btn { width: 100%; padding: 18px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .submit-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(58, 134, 255, 0.2); }
-        
+        .submit-btn:hover { background: #2563eb; transform: translateY(-2px); }
         .hidden { display: none; }
         .status-msg { text-align: center; padding: 100px 20px; }
     </style>
@@ -144,89 +138,84 @@
     const supabaseClient = supabase.createClient('https://vzfyzbkyrwqkcmfxvpkp.supabase.co', 'sb_publishable_NbOkK1X1xSUqN4ZQmBVjtg_wtAAEvtO');
 
     async function init() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        document.getElementById('loading').classList.add('hidden');
+        try {
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            if (error) throw error;
 
-        if (!user) {
-            document.getElementById('guest-block').classList.remove('hidden');
-            return;
-        }
+            document.getElementById('loading').classList.add('hidden');
 
-        document.getElementById('main-content').classList.remove('hidden');
-        const meta = user.user_metadata;
-        document.getElementById('user-info').innerHTML = `
-            <img src="${meta.avatar_url}" class="avatar">
-            <div>
-                <strong style="font-size: 18px;">${meta.full_name}</strong>
-                <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0].id}</div>
-            </div>
-            <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
-        `;
+            if (!user) {
+                document.getElementById('guest-block').classList.remove('hidden');
+                return;
+            }
 
-        document.getElementById('applicationForm').onsubmit = async (e) => {
-            e.preventDefault();
-            
-            const btn = e.target.querySelector('button');
-            btn.disabled = true;
-            btn.innerText = "ОТПРАВКА...";
+            document.getElementById('main-content').classList.remove('hidden');
+            const meta = user.user_metadata;
+            document.getElementById('user-info').innerHTML = `
+                <img src="${meta.avatar_url}" class="avatar">
+                <div>
+                    <strong style="font-size: 18px;">${meta.full_name}</strong>
+                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0].id}</div>
+                </div>
+                <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
+            `;
 
-            // ФОРМИРУЕМ ДАННЫЕ ДЛЯ DISCORD
-            const embed = {
-                title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
-                color: 3835903,
-                thumbnail: { url: meta.avatar_url },
-                fields: [
-                    { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
-                    { name: "Возраст", value: document.getElementById('age').value, inline: true },
-                    { name: "Discord", value: document.getElementById('discord').value, inline: true },
-                    { name: "Telegram", value: document.getElementById('telegram').value, inline: true },
-                    { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
-                    { name: "Опыт", value: document.getElementById('experience').value },
-                    { name: "Автобиография", value: document.getElementById('bio').value },
-                    { name: "Оскорбление по нац. признаку", value: document.getElementById('q1').value },
-                    { name: "OOC / IC", value: document.getElementById('q2').value },
-                    { name: "MassDM", value: document.getElementById('q3').value },
-                    { name: "RolePlay убийство", value: document.getElementById('q4').value },
-                    { name: "RevengeKill", value: document.getElementById('q5').value },
-                    { name: "Расследование чата", value: document.getElementById('q6').value },
-                    { name: "Порядок расследования", value: document.getElementById('q7').value },
-                    { name: "МВД и наручники", value: document.getElementById('q8').value },
-                    { name: "Ответственность", value: document.getElementById('responsibility').value }
-                ],
-                footer: { text: `Отправил: ${meta.full_name} | ID: ${user.identities[0].id}` },
-                timestamp: new Date()
+            document.getElementById('applicationForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button');
+                btn.disabled = true;
+                btn.innerText = "ОТПРАВКА...";
+
+                const WEBHOOK_URL = 'https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV';
+
+                const embed = {
+                    title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
+                    color: 3835903,
+                    thumbnail: { url: meta.avatar_url },
+                    fields: [
+                        { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
+                        { name: "Реальный возраст", value: document.getElementById('age').value, inline: true },
+                        { name: "Discord / TG", value: `DS: ${document.getElementById('discord').value}\nTG: ${document.getElementById('telegram').value}`, inline: true },
+                        { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
+                        { name: "Опыт", value: document.getElementById('experience').value },
+                        { name: "Автобиография", value: document.getElementById('bio').value },
+                        { name: "1. Ситуация с оском", value: document.getElementById('q1').value },
+                        { name: "2. OOC и IC информация", value: document.getElementById('q2').value },
+                        { name: "3. Термин MassDM", value: document.getElementById('q3').value },
+                        { name: "4. RolePlay убийство", value: document.getElementById('q4').value },
+                        { name: "5. Ситуация RevengeKill", value: document.getElementById('q5').value },
+                        { name: "6. Процесс расследования жалобы", value: document.getElementById('q6').value },
+                        { name: "7. Порядок расследования (OOC)", value: document.getElementById('q7').value },
+                        { name: "8. МВД и наручники (НРП)", value: document.getElementById('q8').value },
+                        { name: "Ответственность", value: document.getElementById('responsibility').value }
+                    ],
+                    footer: { text: `Отправил: ${meta.full_name} | ID: ${user.identities[0].id}` },
+                    timestamp: new Date()
+                };
+
+                try {
+                    const res = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ embeds: [embed] })
+                    });
+                    if (!res.ok) throw new Error("Ошибка вебхука");
+                    alert("Анкета успешно отправлена!");
+                    e.target.reset();
+                } catch (err) {
+                    alert("Ошибка: " + err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
+                }
             };
 
-            try {
-                // ВСТАВЬ СВОЮ ССЫЛКУ ВЕБХУКА НИЖЕ
-                const https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV = 'ЗДЕСЬ_ТВОЙ_ВЕБХУК'; 
-
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ embeds: [embed] })
-                });
-
-                if (response.ok) {
-                    alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
-                    e.target.reset();
-                } else {
-                    throw new Error("Ошибка при отправке");
-                }
-            } catch (err) {
-                alert("Произошла ошибка: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
-            }
-        };
+        } catch (err) {
+            document.getElementById('loading').innerText = "Ошибка загрузки: " + err.message;
+        }
     }
 
-    async function logout() {
-        await supabaseClient.auth.signOut();
-        window.location.reload();
-    }
-
+    async function logout() { await supabaseClient.auth.signOut(); window.location.reload(); }
     init();
 </script>
 </body>
