@@ -3,164 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bogorodsk RP | Подача анкеты</title>
+    <title>Bogorodsk RP | Анкета Администратора</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --accent-blue: #3b82f6;
-            --header-blue: #3a86ff;
-            --bg-gradient: radial-gradient(circle at top, #0a1120 0%, #050814 100%);
-            --card-bg: rgba(15, 23, 42, 0.8);
-            --input-bg: rgba(30, 41, 59, 0.5);
-            --text: #f8fafc;
-        }
+        :root { --accent: #3a86ff; --bg: #0a1120; --card: #161f32; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f8fafc; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
+        .container { width: 100%; max-width: 800px; }
+        
+        .user-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border: 1px solid rgba(58, 134, 255, 0.3); }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); }
+        
+        .section-title { font-size: 20px; font-weight: bold; color: var(--accent); margin: 30px 0 15px; border-left: 4px solid var(--accent); padding-left: 15px; }
+        
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; }
+        input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; }
+        textarea { resize: vertical; min-height: 100px; }
+        input:focus, textarea:focus { border-color: var(--accent); outline: none; background: rgba(255,255,255,0.08); }
 
-        body {
-            margin: 0;
-            padding: 60px 20px 120px 20px;
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .header-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        h1 {
-            font-size: 38px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: var(--header-blue);
-            margin: 0;
-            font-weight: 900;
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px rgba(58, 134, 255, 0.4); }
-            to { text-shadow: 0 0 25px rgba(58, 134, 255, 0.8), 0 0 40px rgba(58, 134, 255, 0.4); }
-        }
-
-        .section-title {
-            color: var(--header-blue);
-            font-size: 20px;
-            margin: 40px 0 25px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid rgba(58, 134, 255, 0.3);
-            padding-bottom: 10px;
-            width: 100%;
-        }
-
-        .form-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 30px;
-            padding: 40px;
-            width: 100%;
-            max-width: 850px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .form-group {
-            margin-bottom: 30px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #cbd5e1;
-            line-height: 1.5;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 15px 20px;
-            background: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            font-family: inherit;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--header-blue);
-            background: rgba(58, 134, 255, 0.1);
-            box-shadow: 0 0 15px rgba(58, 134, 255, 0.1);
-        }
-
-        textarea { resize: vertical; min-height: 110px; }
-
-        .submit-btn {
-            width: 100%;
-            padding: 20px;
-            background: var(--header-blue);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-size: 16px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.4);
-            filter: brightness(1.1);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 25px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(58, 134, 255, 0.3);
-            padding: 14px 35px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: white;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 13px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-
-        .bottom-nav:hover {
-            transform: translateY(-5px);
-            border-color: var(--header-blue);
-        }
-
-        select option { background: #0a1120; }
+        .submit-btn { width: 100%; padding: 18px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .submit-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(58, 134, 255, 0.2); }
+        
+        .hidden { display: none; }
+        .status-msg { text-align: center; padding: 100px 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header-section">
-        <h1>BOGORODSK ROLEPLAY</h1>
+<div class="container">
+    <div id="loading" class="status-msg">Загрузка портала...</div>
+
+    <div id="guest-block" class="hidden status-msg">
+        <h1>Доступ ограничен</h1>
+        <p>Для подачи анкеты в администрацию проекта необходимо войти через Discord.</p>
+        <br>
+        <a href="https://alekseylevkin88-tech.github.io/bogorodsk-roleplay-login/" 
+           style="background: #5865F2; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+            ПЕРЕЙТИ К АВТОРИЗАЦИИ
+        </a>
     </div>
 
-    <div class="form-container">
-        <form id="fullAdminForm">
-            
+    <div id="main-content" class="hidden">
+        <div class="user-card" id="user-info"></div>
+
+        <form id="applicationForm">
             <div class="section-title">1. Личная информация</div>
             
             <div class="form-group">
@@ -170,7 +56,7 @@
 
             <div class="form-group">
                 <label>Укажите ваш реальный возраст (14+).</label>
-                <input type="number" id="age" min="1" required placeholder="Ваш ответ...">
+                <input type="number" id="age" min="14" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
@@ -226,7 +112,7 @@
             </div>
 
             <div class="form-group">
-                <label>К вам обратились с жалобой на общение игрока в игре. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
+                <label>К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
                 <textarea id="q6" required placeholder="Ваш ответ..."></textarea>
             </div>
 
@@ -249,62 +135,99 @@
                 </select>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">Отправить анкету</button>
+            <button type="submit" class="submit-btn">ОТПРАВИТЬ АНКЕТУ</button>
         </form>
     </div>
+</div>
 
-    <a href="https://alekseylevkin88-tech.github.io/staff-bogorodsk-roleplay/" class="bottom-nav">
-        ← Команда Проекта
-    </a>
+<script>
+    const supabaseClient = supabase.createClient('https://vzfyzbkyrwqkcmfxvpkp.supabase.co', 'sb_publishable_NbOkK1X1xSUqN4ZQmBVjtg_wtAAEvtO');
 
-    <script>
-        document.getElementById('fullAdminForm').addEventListener('submit', function(e) {
+    async function init() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!user) {
+            document.getElementById('guest-block').classList.remove('hidden');
+            return;
+        }
+
+        document.getElementById('main-content').classList.remove('hidden');
+        const meta = user.user_metadata;
+        document.getElementById('user-info').innerHTML = `
+            <img src="${meta.avatar_url}" class="avatar">
+            <div>
+                <strong style="font-size: 18px;">${meta.full_name}</strong>
+                <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0].id}</div>
+            </div>
+            <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
+        `;
+
+        document.getElementById('applicationForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const webhookUrl = "https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV";
+            
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = "ОТПРАВКА...";
 
-            const data = {
-                embeds: [{
-                    title: "НОВАЯ ЗАЯВКА В АДМИНИСТРАЦИЮ",
-                    color: 3835647,
-                    fields: [
-                        { name: "1. Имя / Возраст", value: `Имя: ${document.getElementById('realName').value}\nВозраст: ${document.getElementById('age').value}`, inline: true },
-                        { name: "2. Контакты", value: `DS: ${document.getElementById('discord').value}\nTG: ${document.getElementById('telegram').value}`, inline: true },
-                        { name: "3. Часовой пояс", value: document.getElementById('timezone').value, inline: true },
-                        { name: "4. Опыт в сфере", value: document.getElementById('experience').value },
-                        { name: "5. Автобиография", value: document.getElementById('bio').value },
-                        { name: "6. Ситуация: Оскорбление по нац. признаку", value: document.getElementById('q1').value },
-                        { name: "7. Определения OOC / IC", value: document.getElementById('q2').value },
-                        { name: "8. Определение MassDM", value: document.getElementById('q3').value },
-                        { name: "9. RolePlay убийство", value: document.getElementById('q4').value },
-                        { name: "10. Ситуация RevengeKill", value: document.getElementById('q5').value },
-                        { name: "11. Жалоба на общение игрока", value: document.getElementById('q6').value },
-                        { name: "12. Расследование нарушения правил", value: document.getElementById('q7').value },
-                        { name: "13. Конфликт с сотрудником МВД", value: document.getElementById('q8').value },
-                        { name: "14. Ответственность", value: document.getElementById('responsibility').value }
-                    ],
-                    footer: { text: "Bogorodsk RP | Система заявок" },
-                    timestamp: new Date()
-                }]
+            // ФОРМИРУЕМ ДАННЫЕ ДЛЯ DISCORD
+            const embed = {
+                title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
+                color: 3835903,
+                thumbnail: { url: meta.avatar_url },
+                fields: [
+                    { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
+                    { name: "Возраст", value: document.getElementById('age').value, inline: true },
+                    { name: "Discord", value: document.getElementById('discord').value, inline: true },
+                    { name: "Telegram", value: document.getElementById('telegram').value, inline: true },
+                    { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
+                    { name: "Опыт", value: document.getElementById('experience').value },
+                    { name: "Автобиография", value: document.getElementById('bio').value },
+                    { name: "Оскорбление по нац. признаку", value: document.getElementById('q1').value },
+                    { name: "OOC / IC", value: document.getElementById('q2').value },
+                    { name: "MassDM", value: document.getElementById('q3').value },
+                    { name: "RolePlay убийство", value: document.getElementById('q4').value },
+                    { name: "RevengeKill", value: document.getElementById('q5').value },
+                    { name: "Расследование чата", value: document.getElementById('q6').value },
+                    { name: "Порядок расследования", value: document.getElementById('q7').value },
+                    { name: "МВД и наручники", value: document.getElementById('q8').value },
+                    { name: "Ответственность", value: document.getElementById('responsibility').value }
+                ],
+                footer: { text: `Отправил: ${meta.full_name} | ID: ${user.identities[0].id}` },
+                timestamp: new Date()
             };
 
-            btn.innerText = "ОТПРАВЛЯЕМ...";
-            btn.disabled = true;
+            try {
+                // ВСТАВЬ СВОЮ ССЫЛКУ ВЕБХУКА НИЖЕ
+                const https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV = 'ЗДЕСЬ_ТВОЙ_ВЕБХУК'; 
 
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            }).then(() => {
-                alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
-                btn.innerText = "ОТПРАВЛЕНО";
-                document.getElementById('fullAdminForm').reset();
-            }).catch(() => {
-                alert("Ошибка при отправке! Проверьте соединение.");
-                btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ embeds: [embed] })
+                });
+
+                if (response.ok) {
+                    alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
+                    e.target.reset();
+                } else {
+                    throw new Error("Ошибка при отправке");
+                }
+            } catch (err) {
+                alert("Произошла ошибка: " + err.message);
+            } finally {
                 btn.disabled = false;
-            });
-        });
-    </script>
+                btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
+            }
+        };
+    }
+
+    async function logout() {
+        await supabaseClient.auth.signOut();
+        window.location.reload();
+    }
+
+    init();
+</script>
 </body>
 </html>
