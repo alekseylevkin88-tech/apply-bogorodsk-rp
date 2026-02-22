@@ -27,11 +27,11 @@
 <body>
 
 <div class="container">
-    <div id="loading" class="status-msg">Синхронизация с Discord...</div>
+    <div id="loading" class="status-msg">Синхронизация профиля...</div>
 
     <div id="guest-block" class="hidden status-msg">
         <h1>Доступ ограничен</h1>
-        <p>Не удалось найти активную сессию. Войдите повторно через Discord.</p>
+        <p>Не удалось найти активную сессию Discord. Пожалуйста, авторизуйтесь заново.</p>
         <br>
         <a href="https://alekseylevkin88-tech.github.io/bogorodsk-roleplay-login/" 
            style="background: #5865F2; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold;">
@@ -89,7 +89,7 @@
 
             <div class="form-group">
                 <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
-                <textarea id="q2" required placeholder="Ваح ответ..."></textarea>
+                <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
@@ -141,24 +141,25 @@
 
     async function init() {
         try {
-            // Улучшенная логика извлечения токена
-            const url = new URL(window.location.href.replace('#', '?'));
-            const accessToken = url.searchParams.get('access_token');
-            const refreshToken = url.searchParams.get('refresh_token');
-            
-            if (accessToken) {
-                // Прямая установка сессии без лишних проверок
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const access = params.get('access_token');
+            const refresh = params.get('refresh_token');
+
+            if (access) {
                 await supabaseClient.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken || accessToken
+                    access_token: access,
+                    refresh_token: refresh || access
                 });
-                // Очистка URL
                 window.history.replaceState(null, null, window.location.pathname);
             }
 
-            // Получаем пользователя
-            const { data: { user }, error } = await supabaseClient.auth.getUser();
-            
+            // Небольшая задержка, чтобы сессия точно "прижилась"
+            await new Promise(r => setTimeout(r, 600));
+
+            const { data, error } = await supabaseClient.auth.getSession();
+            const user = data?.session?.user;
+
             document.getElementById('loading').classList.add('hidden');
 
             if (!user) {
@@ -166,21 +167,19 @@
                 return;
             }
 
-            // Если залогинен — показываем контент
             document.getElementById('main-content').classList.remove('hidden');
             const meta = user.user_metadata;
-            document.getElementById('discord').value = meta.full_name || meta.custom_claims?.global_name || "Не определен";
+            document.getElementById('discord').value = meta.full_name || "Discord User";
 
             document.getElementById('user-info').innerHTML = `
                 <img src="${meta.avatar_url}" class="avatar">
                 <div>
                     <strong style="font-size: 18px;">${meta.full_name}</strong>
-                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0]?.id || 'N/A'}</div>
+                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0]?.id || user.id}</div>
                 </div>
                 <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
             `;
 
-            // Обработка формы
             document.getElementById('applicationForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const btn = e.target.querySelector('button');
@@ -196,45 +195,44 @@
                     fields: [
                         { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
                         { name: "Реальный возраст", value: document.getElementById('age').value, inline: true },
-                        { name: "Discord / TG", value: `DS: ${document.getElementById('discord').value}\nTG: ${document.getElementById('telegram').value}`, inline: true },
+                        { name: "Discord", value: document.getElementById('discord').value, inline: true },
+                        { name: "Telegram", value: document.getElementById('telegram').value, inline: true },
                         { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
                         { name: "Опыт", value: document.getElementById('experience').value },
-                        { name: "Автобиография", value: document.getElementById('bio').value },
-                        { name: "Нац. признаки", value: document.getElementById('q1').value },
-                        { name: "OOC и IC", value: document.getElementById('q2').value },
+                        { name: "Био", value: document.getElementById('bio').value },
+                        { name: "Оск. по нац. признаку", value: document.getElementById('q1').value },
+                        { name: "OOC/IC", value: document.getElementById('q2').value },
                         { name: "MassDM", value: document.getElementById('q3').value },
                         { name: "RP убийство", value: document.getElementById('q4').value },
                         { name: "RevengeKill", value: document.getElementById('q5').value },
-                        { name: "Чат-логи/Расследование", value: document.getElementById('q6').value },
-                        { name: "Порядок (OOC)", value: document.getElementById('q7').value },
+                        { name: "Чат-логи", value: document.getElementById('q6').value },
+                        { name: "OOC-позиция", value: document.getElementById('q7').value },
                         { name: "МВД/Наручники", value: document.getElementById('q8').value },
                         { name: "Ответственность", value: document.getElementById('responsibility').value }
                     ],
-                    footer: { text: `Отправил: ${meta.full_name}` },
+                    footer: { text: `Отправил: ${meta.full_name} | ID: ${user.id}` },
                     timestamp: new Date()
                 };
 
                 try {
-                    const res = await fetch(WEBHOOK_URL, {
+                    await fetch(WEBHOOK_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ embeds: [embed] })
                     });
-                    if (!res.ok) throw new Error("Ошибка вебхука");
                     alert("Анкета успешно отправлена!");
                     e.target.reset();
                     document.getElementById('discord').value = meta.full_name;
                 } catch (err) {
-                    alert("Ошибка: " + err.message);
+                    alert("Ошибка отправки в Discord.");
                 } finally {
                     btn.disabled = false;
                     btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
                 }
             };
 
-        } catch (err) {
-            console.error(err);
-            document.getElementById('loading').innerText = "Ошибка: " + (err.message || "Неизвестная ошибка");
+        } catch (e) {
+            document.getElementById('loading').innerText = "Ошибка: " + e.message;
         }
     }
 
