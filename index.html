@@ -16,7 +16,6 @@
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; }
         input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; }
         
-        /* Исправление цвета выпадающего списка */
         select option { background: #fff; color: #000; }
         input[readonly] { background: rgba(255,255,255,0.1); color: #94a3b8; cursor: not-allowed; }
 
@@ -144,20 +143,28 @@
 
     async function init() {
         try {
-            const { data: { user }, error } = await supabaseClient.auth.getUser();
-            if (error) throw error;
+            const hash = window.location.hash.slice(1);
+            const fragment = new URLSearchParams(hash);
+            const accessToken = fragment.get('access_token');
+            
+            if (accessToken) {
+                await supabaseClient.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: accessToken
+                });
+                history.replaceState(null, null, ' '); 
+            }
 
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
             document.getElementById('loading').classList.add('hidden');
 
-            if (!user) {
+            if (error || !user) {
                 document.getElementById('guest-block').classList.remove('hidden');
                 return;
             }
 
             document.getElementById('main-content').classList.remove('hidden');
             const meta = user.user_metadata;
-            
-            // Автозаполнение поля Discord
             document.getElementById('discord').value = meta.full_name || meta.custom_claims?.global_name || "Не определен";
 
             document.getElementById('user-info').innerHTML = `
@@ -188,12 +195,12 @@
                         { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
                         { name: "Опыт", value: document.getElementById('experience').value },
                         { name: "Автобиография", value: document.getElementById('bio').value },
-                        { name: "Ситуация с оском", value: document.getElementById('q1').value },
+                        { name: "Оскорбление по нац. признаку", value: document.getElementById('q1').value },
                         { name: "OOC и IC информация", value: document.getElementById('q2').value },
                         { name: "Термин MassDM", value: document.getElementById('q3').value },
                         { name: "RolePlay убийство", value: document.getElementById('q4').value },
-                        { name: "Ситуация RevengeKill", value: document.getElementById('q5').value },
-                        { name: "Процесс расследования жалобы", value: document.getElementById('q6').value },
+                        { name: "RevengeKill", value: document.getElementById('q5').value },
+                        { name: "Процесс расследования (чат-логи)", value: document.getElementById('q6').value },
                         { name: "Порядок расследования (OOC)", value: document.getElementById('q7').value },
                         { name: "МВД и наручники (НРП)", value: document.getElementById('q8').value },
                         { name: "Ответственность", value: document.getElementById('responsibility').value }
@@ -209,9 +216,8 @@
                         body: JSON.stringify({ embeds: [embed] })
                     });
                     if (!res.ok) throw new Error("Ошибка вебхука");
-                    alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
+                    alert("Анкета успешно отправлена!");
                     e.target.reset();
-                    // После сброса возвращаем ник
                     document.getElementById('discord').value = meta.full_name;
                 } catch (err) {
                     alert("Ошибка: " + err.message);
@@ -231,4 +237,3 @@
 </script>
 </body>
 </html>
-
