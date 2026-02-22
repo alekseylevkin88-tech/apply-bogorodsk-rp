@@ -22,6 +22,7 @@
         .submit-btn:hover { background: #2563eb; transform: translateY(-2px); }
         .hidden { display: none; }
         .status-msg { text-align: center; padding: 100px 20px; }
+        .confirm-btn { background: #22c55e !important; }
     </style>
 </head>
 <body>
@@ -30,13 +31,15 @@
     <div id="loading" class="status-msg">Синхронизация профиля...</div>
 
     <div id="guest-block" class="hidden status-msg">
-        <h1>Доступ ограничен</h1>
-        <p>Не удалось найти активную сессию Discord. Пожалуйста, авторизуйтесь заново.</p>
+        <h1 id="error-title">Доступ ограничен</h1>
+        <p id="error-text">Для подачи анкеты в администрацию проекта необходимо войти через Discord.</p>
         <br>
-        <a href="https://alekseylevkin88-tech.github.io/bogorodsk-roleplay-login/" 
-           style="background: #5865F2; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-            ПЕРЕЙТИ К АВТОРИЗАЦИИ
-        </a>
+        <div id="auth-actions">
+            <a href="https://alekseylevkin88-tech.github.io/bogorodsk-roleplay-login/" 
+               style="background: #5865F2; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ПЕРЕЙТИ К АВТОРИЗАЦИИ
+            </a>
+        </div>
     </div>
 
     <div id="main-content" class="hidden">
@@ -139,105 +142,124 @@
 <script>
     const supabaseClient = supabase.createClient('https://vzfyzbkyrwqkcmfxvpkp.supabase.co', 'sb_publishable_NbOkK1X1xSUqN4ZQmBVjtg_wtAAEvtO');
 
-    async function init() {
-        try {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const access = params.get('access_token');
-            const refresh = params.get('refresh_token');
-
-            if (access) {
-                await supabaseClient.auth.setSession({
-                    access_token: access,
-                    refresh_token: refresh || access
-                });
-                window.history.replaceState(null, null, window.location.pathname);
-            }
-
-            // Небольшая задержка, чтобы сессия точно "прижилась"
-            await new Promise(r => setTimeout(r, 600));
-
-            const { data, error } = await supabaseClient.auth.getSession();
-            const user = data?.session?.user;
-
+    async function checkUser() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session?.user) {
+            showForm(session.user);
+        } else {
             document.getElementById('loading').classList.add('hidden');
-
-            if (!user) {
-                document.getElementById('guest-block').classList.remove('hidden');
-                return;
-            }
-
-            document.getElementById('main-content').classList.remove('hidden');
-            const meta = user.user_metadata;
-            document.getElementById('discord').value = meta.full_name || "Discord User";
-
-            document.getElementById('user-info').innerHTML = `
-                <img src="${meta.avatar_url}" class="avatar">
-                <div>
-                    <strong style="font-size: 18px;">${meta.full_name}</strong>
-                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0]?.id || user.id}</div>
-                </div>
-                <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
-            `;
-
-            document.getElementById('applicationForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const btn = e.target.querySelector('button');
-                btn.disabled = true;
-                btn.innerText = "ОТПРАВКА...";
-
-                const WEBHOOK_URL = 'https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV';
-
-                const embed = {
-                    title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
-                    color: 3835903,
-                    thumbnail: { url: meta.avatar_url },
-                    fields: [
-                        { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
-                        { name: "Реальный возраст", value: document.getElementById('age').value, inline: true },
-                        { name: "Discord", value: document.getElementById('discord').value, inline: true },
-                        { name: "Telegram", value: document.getElementById('telegram').value, inline: true },
-                        { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
-                        { name: "Опыт", value: document.getElementById('experience').value },
-                        { name: "Био", value: document.getElementById('bio').value },
-                        { name: "Оск. по нац. признаку", value: document.getElementById('q1').value },
-                        { name: "OOC/IC", value: document.getElementById('q2').value },
-                        { name: "MassDM", value: document.getElementById('q3').value },
-                        { name: "RP убийство", value: document.getElementById('q4').value },
-                        { name: "RevengeKill", value: document.getElementById('q5').value },
-                        { name: "Чат-логи", value: document.getElementById('q6').value },
-                        { name: "OOC-позиция", value: document.getElementById('q7').value },
-                        { name: "МВД/Наручники", value: document.getElementById('q8').value },
-                        { name: "Ответственность", value: document.getElementById('responsibility').value }
-                    ],
-                    footer: { text: `Отправил: ${meta.full_name} | ID: ${user.id}` },
-                    timestamp: new Date()
-                };
-
-                try {
-                    await fetch(WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ embeds: [embed] })
-                    });
-                    alert("Анкета успешно отправлена!");
-                    e.target.reset();
-                    document.getElementById('discord').value = meta.full_name;
-                } catch (err) {
-                    alert("Ошибка отправки в Discord.");
-                } finally {
-                    btn.disabled = false;
-                    btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
-                }
-            };
-
-        } catch (e) {
-            document.getElementById('loading').innerText = "Ошибка: " + e.message;
+            document.getElementById('guest-block').classList.remove('hidden');
         }
     }
 
-    async function logout() { await supabaseClient.auth.signOut(); window.location.reload(); }
-    init();
+    async function handleHashAuth() {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const access = params.get('access_token');
+
+        if (access) {
+            document.getElementById('loading').innerText = "Ключ получен! Нажмите кнопку ниже для входа.";
+            document.getElementById('auth-actions').innerHTML = `
+                <button onclick="confirmEntry('${access}')" class="submit-btn confirm-btn">ПОДТВЕРДИТЬ ВХОД В АНКЕТУ</button>
+            `;
+            document.getElementById('guest-block').classList.remove('hidden');
+            document.getElementById('loading').classList.add('hidden');
+            return true;
+        }
+        return false;
+    }
+
+    async function confirmEntry(token) {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('loading').innerText = "Авторизация...";
+        document.getElementById('guest-block').classList.add('hidden');
+        
+        const { data, error } = await supabaseClient.auth.setSession({
+            access_token: token,
+            refresh_token: token
+        });
+
+        if (error) {
+            alert("Ошибка входа: " + error.message);
+            window.location.hash = "";
+            location.reload();
+        } else {
+            window.history.replaceState(null, null, window.location.pathname);
+            showForm(data.user);
+        }
+    }
+
+    function showForm(user) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('guest-block').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+        
+        const meta = user.user_metadata;
+        document.getElementById('discord').value = meta.full_name || "Пользователь";
+        
+        document.getElementById('user-info').innerHTML = `
+            <img src="${meta.avatar_url}" class="avatar">
+            <div>
+                <strong>${meta.full_name}</strong>
+                <div style="font-size: 11px; opacity: 0.5;">ID: ${user.id}</div>
+            </div>
+            <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
+        `;
+    }
+
+    document.getElementById('applicationForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerText = "ОТПРАВКА...";
+
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV';
+        
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const user = session.user;
+
+        const embed = {
+            title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
+            color: 3835903,
+            thumbnail: { url: user.user_metadata.avatar_url },
+            fields: [
+                { name: "Имя / Возраст", value: `${document.getElementById('realName').value} / ${document.getElementById('age').value}`, inline: true },
+                { name: "Discord", value: document.getElementById('discord').value, inline: true },
+                { name: "Telegram / Пояс", value: `${document.getElementById('telegram').value} / ${document.getElementById('timezone').value}`, inline: true },
+                { name: "Опыт", value: document.getElementById('experience').value },
+                { name: "Автобиография", value: document.getElementById('bio').value },
+                { name: "Вопросы (Q1-Q8)", value: `Q1: ${document.getElementById('q1').value}\nQ2: ${document.getElementById('q2').value}\nQ3: ${document.getElementById('q3').value}\nQ4: ${document.getElementById('q4').value}\nQ5: ${document.getElementById('q5').value}\nQ6: ${document.getElementById('q6').value}\nQ7: ${document.getElementById('q7').value}\nQ8: ${document.getElementById('q8').value}` },
+                { name: "Ответственность", value: document.getElementById('responsibility').value }
+            ],
+            footer: { text: `Discord ID: ${user.id}` },
+            timestamp: new Date()
+        };
+
+        try {
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ embeds: [embed] })
+            });
+            alert("Анкета успешно отправлена!");
+            e.target.reset();
+        } catch (err) {
+            alert("Ошибка при отправке.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
+        }
+    };
+
+    async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+
+    // Старт
+    (async () => {
+        const hasHash = await handleHashAuth();
+        if (!hasHash) {
+            await checkUser();
+        }
+    })();
 </script>
 </body>
 </html>
