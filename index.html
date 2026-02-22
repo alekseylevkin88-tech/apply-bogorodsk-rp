@@ -15,10 +15,8 @@
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; }
         input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; }
-        
         select option { background: #fff; color: #000; }
         input[readonly] { background: rgba(255,255,255,0.1); color: #94a3b8; cursor: not-allowed; }
-
         textarea { resize: vertical; min-height: 100px; }
         .submit-btn { width: 100%; padding: 18px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
         .submit-btn:hover { background: #2563eb; transform: translateY(-2px); }
@@ -29,11 +27,11 @@
 <body>
 
 <div class="container">
-    <div id="loading" class="status-msg">Загрузка портала...</div>
+    <div id="loading" class="status-msg">Синхронизация с Discord...</div>
 
     <div id="guest-block" class="hidden status-msg">
         <h1>Доступ ограничен</h1>
-        <p>Для подачи анкеты в администрацию проекта необходимо войти через Discord.</p>
+        <p>Не удалось найти активную сессию. Войдите повторно через Discord.</p>
         <br>
         <a href="https://alekseylevkin88-tech.github.io/bogorodsk-roleplay-login/" 
            style="background: #5865F2; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold;">
@@ -91,7 +89,7 @@
 
             <div class="form-group">
                 <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
-                <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
+                <textarea id="q2" required placeholder="Ваح ответ..."></textarea>
             </div>
 
             <div class="form-group">
@@ -143,26 +141,32 @@
 
     async function init() {
         try {
-            const hash = window.location.hash.slice(1);
-            const fragment = new URLSearchParams(hash);
-            const accessToken = fragment.get('access_token');
+            // Улучшенная логика извлечения токена
+            const url = new URL(window.location.href.replace('#', '?'));
+            const accessToken = url.searchParams.get('access_token');
+            const refreshToken = url.searchParams.get('refresh_token');
             
             if (accessToken) {
+                // Прямая установка сессии без лишних проверок
                 await supabaseClient.auth.setSession({
                     access_token: accessToken,
-                    refresh_token: accessToken
+                    refresh_token: refreshToken || accessToken
                 });
-                history.replaceState(null, null, ' '); 
+                // Очистка URL
+                window.history.replaceState(null, null, window.location.pathname);
             }
 
+            // Получаем пользователя
             const { data: { user }, error } = await supabaseClient.auth.getUser();
+            
             document.getElementById('loading').classList.add('hidden');
 
-            if (error || !user) {
+            if (!user) {
                 document.getElementById('guest-block').classList.remove('hidden');
                 return;
             }
 
+            // Если залогинен — показываем контент
             document.getElementById('main-content').classList.remove('hidden');
             const meta = user.user_metadata;
             document.getElementById('discord').value = meta.full_name || meta.custom_claims?.global_name || "Не определен";
@@ -171,11 +175,12 @@
                 <img src="${meta.avatar_url}" class="avatar">
                 <div>
                     <strong style="font-size: 18px;">${meta.full_name}</strong>
-                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0].id}</div>
+                    <div style="font-size: 12px; opacity: 0.5;">Discord ID: ${user.identities[0]?.id || 'N/A'}</div>
                 </div>
                 <button onclick="logout()" style="margin-left:auto; background:none; border:1px solid #ef4444; color:#ef4444; border-radius:5px; cursor:pointer; padding:5px 10px;">Выход</button>
             `;
 
+            // Обработка формы
             document.getElementById('applicationForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const btn = e.target.querySelector('button');
@@ -195,17 +200,17 @@
                         { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
                         { name: "Опыт", value: document.getElementById('experience').value },
                         { name: "Автобиография", value: document.getElementById('bio').value },
-                        { name: "Оскорбление по нац. признаку", value: document.getElementById('q1').value },
-                        { name: "OOC и IC информация", value: document.getElementById('q2').value },
-                        { name: "Термин MassDM", value: document.getElementById('q3').value },
-                        { name: "RolePlay убийство", value: document.getElementById('q4').value },
+                        { name: "Нац. признаки", value: document.getElementById('q1').value },
+                        { name: "OOC и IC", value: document.getElementById('q2').value },
+                        { name: "MassDM", value: document.getElementById('q3').value },
+                        { name: "RP убийство", value: document.getElementById('q4').value },
                         { name: "RevengeKill", value: document.getElementById('q5').value },
-                        { name: "Процесс расследования (чат-логи)", value: document.getElementById('q6').value },
-                        { name: "Порядок расследования (OOC)", value: document.getElementById('q7').value },
-                        { name: "МВД и наручники (НРП)", value: document.getElementById('q8').value },
+                        { name: "Чат-логи/Расследование", value: document.getElementById('q6').value },
+                        { name: "Порядок (OOC)", value: document.getElementById('q7').value },
+                        { name: "МВД/Наручники", value: document.getElementById('q8').value },
                         { name: "Ответственность", value: document.getElementById('responsibility').value }
                     ],
-                    footer: { text: `Отправил: ${meta.full_name} | ID: ${user.identities[0].id}` },
+                    footer: { text: `Отправил: ${meta.full_name}` },
                     timestamp: new Date()
                 };
 
@@ -228,7 +233,8 @@
             };
 
         } catch (err) {
-            document.getElementById('loading').innerText = "Ошибка загрузки: " + err.message;
+            console.error(err);
+            document.getElementById('loading').innerText = "Ошибка: " + (err.message || "Неизвестная ошибка");
         }
     }
 
