@@ -11,14 +11,13 @@
         .container { width: 100%; max-width: 800px; }
         .hidden { display: none !important; }
         
-        /* Вход */
+        /* Авторизация */
         .auth-card { background: var(--card); padding: 50px 20px; border-radius: 20px; border: 1px solid rgba(58,134,255,0.2); text-align: center; margin-top: 50px; }
         .btn-discord { background: #5865F2; color: white; padding: 16px 32px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-discord:hover { background: #4752c4; transform: translateY(-2px); }
 
         /* Анкета */
         .user-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border: 1px solid rgba(58,134,255,0.1); }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); background: #2a3347; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); }
         .section-title { font-size: 20px; font-weight: bold; color: var(--accent); margin: 40px 0 20px; border-left: 4px solid var(--accent); padding-left: 15px; }
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; font-weight: 500; }
@@ -28,28 +27,26 @@
             border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
             color: white; box-sizing: border-box; font-size: 15px; outline: none; 
         }
+
+        /* Стиль для заблокированного поля */
+        input[readonly] { background: rgba(255,255,255,0.02); color: #64748b; cursor: not-allowed; border-style: dashed; }
         
-        /* Исправленный селект */
-        select { cursor: pointer; appearance: none; }
-        select option { background: #161f32; color: white; padding: 10px; }
+        select option { background: #161f32; color: white; }
         
-        input:focus, textarea:focus, select:focus { border-color: var(--accent); }
         textarea { resize: vertical; min-height: 110px; }
         .submit-btn { width: 100%; padding: 20px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .submit-btn:hover { background: #2563eb; }
-        .logout-btn { margin-left: auto; background: none; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .logout-btn:hover { background: rgba(239, 68, 68, 0.1); }
+        .logout-btn { margin-left: auto; background: none; border: 1px solid #ef4444; color: #ef4444; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="loading" style="text-align:center; padding-top:100px; font-weight: bold;">ЗАГРУЗКА ПОРТАЛА...</div>
+    <div id="loading" style="text-align:center; padding-top:100px;">Синхронизация...</div>
 
     <div id="auth-screen" class="hidden">
         <div class="auth-card">
-            <h1 style="margin-top:0;">Bogorodsk RP</h1>
-            <p style="color: #94a3b8;">Для подачи анкеты в администрацию необходимо подтвердить личность через Discord</p>
+            <h1>Bogorodsk Portal</h1>
+            <p>Авторизуйтесь через Discord для доступа к анкете</p>
             <br>
             <button class="btn-discord" onclick="login()">ВОЙТИ ЧЕРЕЗ DISCORD</button>
         </div>
@@ -59,8 +56,8 @@
         <div class="user-card">
             <img id="u-avatar" src="" class="avatar">
             <div>
-                <strong id="u-name" style="font-size: 18px;">...</strong>
-                <div id="u-id" style="font-size: 12px; color: var(--accent); font-family: monospace; margin-top: 2px;">Discord ID: ...</div>
+                <strong id="u-name">...</strong>
+                <div id="u-id" style="font-size: 12px; color: var(--accent);">Discord ID: ...</div>
             </div>
             <button class="logout-btn" onclick="logout()">Выход</button>
         </div>
@@ -68,6 +65,11 @@
         <form id="applyForm">
             <div class="section-title">1. Личная информация</div>
             
+            <div class="form-group">
+                <label>Ваш Discord (Определяется автоматически).</label>
+                <input type="text" id="discordTag" readonly>
+            </div>
+
             <div class="form-group">
                 <label>Укажите ваше реальное имя.</label>
                 <input type="text" id="realName" required placeholder="Ваш ответ...">
@@ -99,7 +101,7 @@
             </div>
 
             <div class="section-title">2. Проверка знаний и ответственности</div>
-
+            
             <div class="form-group">
                 <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
                 <textarea id="q1" required placeholder="Ваш ответ..."></textarea>
@@ -143,7 +145,7 @@
             <div class="form-group">
                 <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
                 <select id="resp" required>
-                    <option value="" disabled selected style="color: #666;">Выберите ответ</option>
+                    <option value="" disabled selected>Выберите ответ</option>
                     <option value="Да, полностью понимаю">Да, полностью понимаю</option>
                     <option value="Нет">Нет</option>
                 </select>
@@ -158,10 +160,7 @@
     const supabaseClient = supabase.createClient('https://vzfyzbkyrwqkcmfxvpkp.supabase.co', 'sb_publishable_NbOkK1X1xSUqN4ZQmBVjtg_wtAAEvtO');
 
     async function login() {
-        await supabaseClient.auth.signInWithOAuth({ 
-            provider: 'discord', 
-            options: { redirectTo: window.location.href } 
-        });
+        await supabaseClient.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: window.location.href } });
     }
 
     async function logout() {
@@ -176,10 +175,16 @@
             document.getElementById('auth-screen').classList.add('hidden');
             
             const user = session.user.user_metadata;
-            document.getElementById('u-name').innerText = user.full_name || user.custom_claims.global_name;
+            const discordName = user.full_name || user.name;
+            const dId = session.user.identities[0].identity_data.sub;
+
+            document.getElementById('u-name').innerText = discordName;
             document.getElementById('u-avatar').src = user.avatar_url;
-            // Выводим реальный ID провайдера (Discord)
-            document.getElementById('u-id').innerText = `Discord ID: ${session.user.identities[0].identity_data.sub}`;
+            document.getElementById('u-id').innerText = `Discord ID: ${dId}`;
+            
+            // Автозаполнение поля Discord и блокировка
+            document.getElementById('discordTag').value = discordName;
+
         } else {
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('app-screen').classList.add('hidden');
@@ -192,36 +197,41 @@
         btn.disabled = true; btn.innerText = "ОТПРАВКА...";
 
         const { data: { session } } = await supabaseClient.auth.getSession();
-        const discordId = session.user.identities[0].identity_data.sub;
+        const dId = session.user.identities[0].identity_data.sub;
         const WEBHOOK = "https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV";
 
         const data = {
             embeds: [{
-                title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
+                title: "НОВАЯ АНКЕТА: " + session.user.user_metadata.full_name,
                 color: 3835903,
                 thumbnail: { url: session.user.user_metadata.avatar_url },
                 fields: [
-                    { name: "Discord Аккаунт", value: `${session.user.user_metadata.full_name} (ID: ${discordId})`, inline: false },
-                    { name: "1. Личные данные", value: `**Имя:** ${document.getElementById('realName').value}\n**Возраст:** ${document.getElementById('age').value}\n**TG:** ${document.getElementById('telegram').value}\n**Пояс:** ${document.getElementById('timezone').value}` },
-                    { name: "2. Опыт и Био", value: `**Опыт:** ${document.getElementById('experience').value}\n**Био:** ${document.getElementById('bio').value}` },
-                    { name: "3. Знания (Q1-Q4)", value: `**Q1:** ${document.getElementById('q1').value}\n**Q2:** ${document.getElementById('q2').value}\n**Q3:** ${document.getElementById('q3').value}\n**Q4:** ${document.getElementById('q4').value}` },
-                    { name: "4. Знания (Q5-Q8)", value: `**Q5:** ${document.getElementById('q5').value}\n**Q6:** ${document.getElementById('q6').value}\n**Q7:** ${document.getElementById('q7').value}\n**Q8:** ${document.getElementById('q8').value}` },
-                    { name: "Ответственность", value: document.getElementById('resp').value }
+                    { name: "Системный Discord ID", value: dId, inline: true },
+                    { name: "Discord профиль", value: document.getElementById('discordTag').value, inline: true },
+                    { name: "Реальное имя", value: document.getElementById('realName').value, inline: true },
+                    { name: "Возраст", value: document.getElementById('age').value, inline: true },
+                    { name: "Telegram", value: document.getElementById('telegram').value, inline: true },
+                    { name: "Часовой пояс", value: document.getElementById('timezone').value, inline: true },
+                    { name: "Опыт в сфере", value: document.getElementById('experience').value },
+                    { name: "Автобиография", value: document.getElementById('bio').value },
+                    { name: "Вопрос 1: Оскорбление по национальному признаку", value: document.getElementById('q1').value },
+                    { name: "Вопрос 2: OOC и IC информация", value: document.getElementById('q2').value },
+                    { name: "Вопрос 3: Термин MassDM", value: document.getElementById('q3').value },
+                    { name: "Вопрос 4: RolePlay убийство", value: document.getElementById('q4').value },
+                    { name: "Вопрос 5: RevengeKill", value: document.getElementById('q5').value },
+                    { name: "Вопрос 6: Расследование жалобы на общение", value: document.getElementById('q6').value },
+                    { name: "Вопрос 7: Нарушение правил взаимодействия", value: document.getElementById('q7').value },
+                    { name: "Вопрос 8: Ситуация с сотрудником МВД", value: document.getElementById('q8').value },
+                    { name: "Понимание ответственности", value: document.getElementById('resp').value }
                 ],
-                footer: { text: "Bogorodsk Portal | " + new Date().toLocaleString() }
+                footer: { text: "Bogorodsk RP Portal" },
+                timestamp: new Date()
             }]
         };
 
-        try {
-            const res = await fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-            if (res.ok) {
-                alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
-                location.reload();
-            } else { throw new Error(); }
-        } catch (err) {
-            alert("Ошибка при отправке в Discord. Проверьте интернет.");
-            btn.disabled = false; btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
-        }
+        await fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+        alert("Анкета успешно отправлена!");
+        location.reload();
     };
 </script>
 </body>
