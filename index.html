@@ -64,36 +64,97 @@
             <button class="logout-btn" onclick="logout()">Выход</button>
         </div>
 
-        <form id="applyForm">
-            <div class="section-title">1. Личная информация</div>
-            <div class="form-group"><label>Ваш Discord (Автоматически)</label><input type="text" id="discordTag" readonly></div>
-            <div class="form-group"><label>Укажите ваше реальное имя.</label><input type="text" id="realName" required></div>
-            <div class="form-group"><label>Укажите ваш реальный возраст (14+).</label><input type="number" id="age" min="14" required></div>
-            <div class="form-group"><label>Укажите ваш юзернейм для связи в Telegram.</label><input type="text" id="telegram" required placeholder="@nickname"></div>
-            <div class="form-group"><label>Укажите ваш часовой пояс.</label><input type="text" id="timezone" required placeholder="МСК / +3"></div>
-            <div class="form-group"><label>Имеете ли вы опыт в данной сфере, если да, то укажите где.</label><textarea id="experience" required></textarea></div>
-            <div class="form-group"><label>Напишите автобиографию примерно в трёх предложениях.</label><textarea id="bio" required></textarea></div>
+<form id="applyForm">
+    <div class="section-title">1. Личная информация</div>
 
-            <div class="section-title">2. Проверка знаний</div>
-            <div class="form-group"><label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label><textarea id="q1" required></textarea></div>
-            <div class="form-group"><label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label><textarea id="q2" required></textarea></div>
-            <div class="form-group"><label>Что означает термин MassDM? Приведите пример такой ситуации.</label><textarea id="q3" required></textarea></div>
-            <div class="form-group"><label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label><textarea id="q4" required></textarea></div>
-            <div class="form-group"><label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label><textarea id="q5" required></textarea></div>
-            <div class="form-group"><label>К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label><textarea id="q6" required></textarea></div>
-            <div class="form-group"><label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label><textarea id="q7" required></textarea></div>
-            <div class="form-group"><label>В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label><textarea id="q8" required></textarea></div>
+    <div class="form-group">
+        <label>Ваш Discord.</label>
+        <input type="text" id="discordTag" readonly>
+    </div>
 
-            <div class="form-group">
-                <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
-                <select id="resp" required>
-                    <option value="" disabled selected>Выберите ответ</option>
-                    <option value="Да, полностью понимаю">Да, полностью понимаю</option>
-                    <option value="Нет">Нет</option>
-                </select>
-            </div>
-            <button type="submit" class="submit-btn" id="subBtn">ОТПРАВИТЬ АНКЕТУ</button>
-        </form>
+    <div class="form-group">
+        <label>Укажите ваше реальное имя.</label>
+        <input type="text" id="realName" required placeholder="Ваш ответ...">
+    </div>
+
+    <div class="form-group">
+        <label>Укажите ваш реальный возраст (14+).</label>
+        <input type="number" id="age" min="14" required placeholder="Ваш ответ...">
+    </div>
+
+    <div class="form-group">
+        <label>Укажите ваш юзернейм для связи в Telegram.</label>
+        <input type="text" id="telegram" required placeholder="@nickname">
+    </div>
+
+    <div class="form-group">
+        <label>Укажите ваш часовой пояс.</label>
+        <input type="text" id="timezone" required placeholder="Ваш ответ...">
+    </div>
+
+    <div class="form-group">
+        <label>Имеете ли вы опыт в данной сфере, если да, то укажите где.</label>
+        <textarea id="experience" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Напишите автобиографию примерно в трёх предложениях.</label>
+        <textarea id="bio" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="section-title">2. Проверка знаний</div>
+
+    <div class="form-group">
+        <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
+        <textarea id="q1" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
+        <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Что означает термин MassDM? Приведите пример такой ситуации.</label>
+        <textarea id="q3" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label>
+        <textarea id="q4" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label>
+        <textarea id="q5" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
+        <textarea id="q6" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label>
+        <textarea id="q7" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label>
+        <textarea id="q8" required placeholder="Ваш ответ..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
+        <select id="resp" required>
+            <option value="" disabled selected>Выберите ответ</option>
+            <option value="Да, полностью понимаю">Да, полностью понимаю</option>
+            <option value="Нет">Нет</option>
+        </select>
+    </div>
+
+    <button type="submit" class="submit-btn" id="subBtn">ОТПРАВИТЬ АНКЕТУ</button>
+</form>
     </div>
 </div>
 
@@ -165,3 +226,4 @@
 </script>
 </body>
 </html>
+
