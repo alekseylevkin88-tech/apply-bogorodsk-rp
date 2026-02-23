@@ -6,39 +6,50 @@
     <title>Bogorodsk RP | Анкета в Администрацию</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --accent: #3a86ff; --bg: #0a1120; --card: #161f32; }
+        :root { --accent: #3a86ff; --bg: #0a1120; --card: #161f32; --input-bg: rgba(255,255,255,0.05); }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f8fafc; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
         .container { width: 100%; max-width: 800px; }
         .hidden { display: none !important; }
         
-        /* Стили входа */
+        /* Вход */
         .auth-card { background: var(--card); padding: 50px 20px; border-radius: 20px; border: 1px solid rgba(58,134,255,0.2); text-align: center; margin-top: 50px; }
         .btn-discord { background: #5865F2; color: white; padding: 16px 32px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; text-decoration: none; display: inline-block; }
         .btn-discord:hover { background: #4752c4; transform: translateY(-2px); }
 
-        /* Стили анкеты */
+        /* Анкета */
         .user-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border: 1px solid rgba(58,134,255,0.1); }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); background: #2a3347; }
         .section-title { font-size: 20px; font-weight: bold; color: var(--accent); margin: 40px 0 20px; border-left: 4px solid var(--accent); padding-left: 15px; }
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; line-height: 1.5; font-weight: 500; }
-        input, textarea, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px; outline: none; }
-        input:focus, textarea:focus { border-color: var(--accent); }
+        
+        input, textarea, select { 
+            width: 100%; padding: 14px; background: var(--input-bg); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
+            color: white; box-sizing: border-box; font-size: 15px; outline: none; 
+        }
+        
+        /* Исправленный селект */
+        select { cursor: pointer; appearance: none; }
+        select option { background: #161f32; color: white; padding: 10px; }
+        
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); }
         textarea { resize: vertical; min-height: 110px; }
         .submit-btn { width: 100%; padding: 20px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
         .submit-btn:hover { background: #2563eb; }
-        .logout-btn { margin-left: auto; background: none; border: 1px solid #ef4444; color: #ef4444; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+        .logout-btn { margin-left: auto; background: none; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="loading" style="text-align:center; padding-top:100px;">Синхронизация...</div>
+    <div id="loading" style="text-align:center; padding-top:100px; font-weight: bold;">ЗАГРУЗКА ПОРТАЛА...</div>
 
     <div id="auth-screen" class="hidden">
         <div class="auth-card">
-            <h1>Bogorodsk RP</h1>
-            <p style="color: #94a3b8;">Пожалуйста, авторизуйтесь через Discord для доступа к анкете</p>
+            <h1 style="margin-top:0;">Bogorodsk RP</h1>
+            <p style="color: #94a3b8;">Для подачи анкеты в администрацию необходимо подтвердить личность через Discord</p>
             <br>
             <button class="btn-discord" onclick="login()">ВОЙТИ ЧЕРЕЗ DISCORD</button>
         </div>
@@ -48,8 +59,8 @@
         <div class="user-card">
             <img id="u-avatar" src="" class="avatar">
             <div>
-                <strong id="u-name">...</strong>
-                <div id="u-id" style="font-size: 10px; opacity: 0.5;"></div>
+                <strong id="u-name" style="font-size: 18px;">...</strong>
+                <div id="u-id" style="font-size: 12px; color: var(--accent); font-family: monospace; margin-top: 2px;">Discord ID: ...</div>
             </div>
             <button class="logout-btn" onclick="logout()">Выход</button>
         </div>
@@ -64,75 +75,75 @@
 
             <div class="form-group">
                 <label>Укажите ваш реальный возраст (14+).</label>
-                <input type="number" id="age" min="14" required>
+                <input type="number" id="age" min="14" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
                 <label>Укажите ваш юзернейм для связи в Telegram.</label>
-                <input type="text" id="telegram" required placeholder="@username">
+                <input type="text" id="telegram" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
                 <label>Укажите ваш часовой пояс.</label>
-                <input type="text" id="timezone" required placeholder="МСК +0">
+                <input type="text" id="timezone" required placeholder="Ваш ответ...">
             </div>
 
             <div class="form-group">
                 <label>Имеете ли вы опыт в данной сфере, если да, то укажите где.</label>
-                <textarea id="experience" required></textarea>
+                <textarea id="experience" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Напишите автобиографию примерно в трёх предложениях.</label>
-                <textarea id="bio" required></textarea>
+                <textarea id="bio" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="section-title">2. Проверка знаний и ответственности</div>
 
             <div class="form-group">
                 <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
-                <textarea id="q1" required></textarea>
+                <textarea id="q1" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
-                <textarea id="q2" required></textarea>
+                <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Что означает термин MassDM? Приведите пример такой ситуации.</label>
-                <textarea id="q3" required></textarea>
+                <textarea id="q3" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label>
-                <textarea id="q4" required></textarea>
+                <textarea id="q4" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label>
-                <textarea id="q5" required></textarea>
+                <textarea id="q5" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
-                <textarea id="q6" required></textarea>
+                <textarea id="q6" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label>
-                <textarea id="q7" required></textarea>
+                <textarea id="q7" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label>
-                <textarea id="q8" required></textarea>
+                <textarea id="q8" required placeholder="Ваш ответ..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
                 <select id="resp" required>
-                    <option value="" disabled selected>Выберите ответ</option>
+                    <option value="" disabled selected style="color: #666;">Выберите ответ</option>
                     <option value="Да, полностью понимаю">Да, полностью понимаю</option>
                     <option value="Нет">Нет</option>
                 </select>
@@ -165,9 +176,10 @@
             document.getElementById('auth-screen').classList.add('hidden');
             
             const user = session.user.user_metadata;
-            document.getElementById('u-name').innerText = user.full_name;
+            document.getElementById('u-name').innerText = user.full_name || user.custom_claims.global_name;
             document.getElementById('u-avatar').src = user.avatar_url;
-            document.getElementById('u-id').innerText = `UUID: ${session.user.id}`;
+            // Выводим реальный ID провайдера (Discord)
+            document.getElementById('u-id').innerText = `Discord ID: ${session.user.identities[0].identity_data.sub}`;
         } else {
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('app-screen').classList.add('hidden');
@@ -180,32 +192,34 @@
         btn.disabled = true; btn.innerText = "ОТПРАВКА...";
 
         const { data: { session } } = await supabaseClient.auth.getSession();
+        const discordId = session.user.identities[0].identity_data.sub;
         const WEBHOOK = "https://discord.com/api/webhooks/1474512755254890659/smLrVXM3FjXW6Q9ieTTcA35dawhI04_x_g47lvfNtq7DzC-pz0T3vIbCE_YBIMw7hnVV";
 
         const data = {
             embeds: [{
-                title: "НОВАЯ АНКЕТА: " + session.user.user_metadata.full_name,
+                title: "НОВАЯ АНКЕТА В АДМИНИСТРАЦИЮ",
                 color: 3835903,
                 thumbnail: { url: session.user.user_metadata.avatar_url },
                 fields: [
-                    { name: "Данные", value: `Имя: ${document.getElementById('realName').value}\nВозраст: ${document.getElementById('age').value}\nTG: ${document.getElementById('telegram').value}\nПояс: ${document.getElementById('timezone').value}` },
-                    { name: "Опыт и Био", value: `Опыт: ${document.getElementById('experience').value}\nБио: ${document.getElementById('bio').value}` },
-                    { name: "Ответы", value: `Q1: ${document.getElementById('q1').value}\nQ2: ${document.getElementById('q2').value}\nQ3: ${document.getElementById('q3').value}\nQ4: ${document.getElementById('q4').value}\nQ5: ${document.getElementById('q5').value}\nQ6: ${document.getElementById('q6').value}\nQ7: ${document.getElementById('q7').value}\nQ8: ${document.getElementById('q8').value}` },
+                    { name: "Discord Аккаунт", value: `${session.user.user_metadata.full_name} (ID: ${discordId})`, inline: false },
+                    { name: "1. Личные данные", value: `**Имя:** ${document.getElementById('realName').value}\n**Возраст:** ${document.getElementById('age').value}\n**TG:** ${document.getElementById('telegram').value}\n**Пояс:** ${document.getElementById('timezone').value}` },
+                    { name: "2. Опыт и Био", value: `**Опыт:** ${document.getElementById('experience').value}\n**Био:** ${document.getElementById('bio').value}` },
+                    { name: "3. Знания (Q1-Q4)", value: `**Q1:** ${document.getElementById('q1').value}\n**Q2:** ${document.getElementById('q2').value}\n**Q3:** ${document.getElementById('q3').value}\n**Q4:** ${document.getElementById('q4').value}` },
+                    { name: "4. Знания (Q5-Q8)", value: `**Q5:** ${document.getElementById('q5').value}\n**Q6:** ${document.getElementById('q6').value}\n**Q7:** ${document.getElementById('q7').value}\n**Q8:** ${document.getElementById('q8').value}` },
                     { name: "Ответственность", value: document.getElementById('resp').value }
                 ],
-                footer: { text: "Discord UUID: " + session.user.id },
-                timestamp: new Date()
+                footer: { text: "Bogorodsk Portal | " + new Date().toLocaleString() }
             }]
         };
 
         try {
             const res = await fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
             if (res.ok) {
-                alert("Анкета успешно отправлена!");
+                alert("Анкета успешно отправлена! Ожидайте ответа в Discord или Telegram.");
                 location.reload();
             } else { throw new Error(); }
         } catch (err) {
-            alert("Ошибка при отправке. Проверьте соединение.");
+            alert("Ошибка при отправке в Discord. Проверьте интернет.");
             btn.disabled = false; btn.innerText = "ОТПРАВИТЬ АНКЕТУ";
         }
     };
