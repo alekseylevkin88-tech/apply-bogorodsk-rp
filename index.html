@@ -2,185 +2,280 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <title>Bogorodsk RP | Анкета в Администрацию</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bogorodsk RP | Анкета</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        :root { --accent: #3a86ff; --bg: #0a1120; --card: #161f32; --input-bg: rgba(255,255,255,0.05); }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f8fafc; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
-        .container { width: 100%; max-width: 800px; }
-        .hidden { display: none !important; }
-        
-        /* Авторизация */
-        .auth-card { background: var(--card); padding: 50px 20px; border-radius: 20px; border: 1px solid rgba(58,134,255,0.2); text-align: center; }
-        .btn-discord { background: #5865F2; color: white; padding: 16px 32px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
-
-        /* Шапка юзера */
-        .user-card { background: var(--card); padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border: 1px solid rgba(58,134,255,0.1); }
-        .avatar { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--accent); background: #000; }
-        .logout-btn { margin-left: auto; background: none; border: 1px solid #ef4444; color: #ef4444; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-
-        /* Форма */
-        .section-title { font-size: 20px; font-weight: bold; color: var(--accent); margin: 40px 0 20px; border-left: 4px solid var(--accent); padding-left: 15px; }
-        .form-group { margin-bottom: 25px; }
-        label { display: block; margin-bottom: 10px; color: #94a3b8; font-size: 14px; font-weight: 500; line-height: 1.4; }
-        
-        input, textarea, select { 
-            width: 100%; padding: 14px; background: var(--input-bg); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
-            color: white; box-sizing: border-box; font-size: 15px; outline: none; appearance: none;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-color: #020617;
+            --bg-gradient: radial-gradient(circle at top, #0b1d3a 0%, #020617 55%, #000000 100%);
+            --accent: #4ea8ff;
+            --accent-soft: rgba(78, 168, 255, 0.35);
+            --accent-strong: rgba(78, 168, 255, 0.95);
+            --text-main: #f5f7ff;
+            --text-muted: #9aa3b8;
+            --danger: #ff5c7a;
+            --border-glass: rgba(110, 178, 255, 0.3);
+            --glass-bg: rgba(4, 10, 24, 0.8);
+            --glass-blur: 20px;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --shadow-soft: 0 24px 55px rgba(1, 4, 12, 0.9);
+            --transition-med: 0.26s ease-out;
         }
-        
-        /* Исправление стиля селекта (чтобы не был белым) */
-        select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
-        select option { background: #161f32; color: white; }
-        
-        input[readonly] { background: rgba(255,255,255,0.02); color: #64748b; cursor: not-allowed; }
-        textarea { resize: vertical; min-height: 100px; }
-        .submit-btn { width: 100%; padding: 20px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .submit-btn:hover { filter: brightness(1.2); }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .hidden { display: none !important; }
+
+        .page-wrap { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 24px; }
+
+        header {
+            display: flex; flex-direction: column; gap: 12px; padding: 18px 22px;
+            border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(3, 10, 30, 0.96), rgba(6, 14, 40, 0.98));
+            border: 1px solid rgba(78, 168, 255, 0.45); box-shadow: var(--shadow-soft); backdrop-filter: blur(24px);
+        }
+
+        .project-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 999px;
+            background: radial-gradient(circle at left, rgba(78, 168, 255, 0.5), transparent 60%);
+            border: 1px solid rgba(78, 168, 255, 0.6); font-size: 13px; color: var(--text-muted);
+        }
+
+        .project-badge span { font-weight: 600; color: var(--accent-strong); }
+
+        .header-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+        .title-block h1 { font-size: 24px; letter-spacing: 0.03em; }
+        .title-block p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+        .status-chip { padding: 6px 10px; border-radius: 999px; font-size: 12px; background: rgba(37, 99, 235, 0.15); color: var(--accent-strong); border: 1px solid rgba(59, 130, 246, 0.7); }
+
+        .layout { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1.2fr); gap: 18px; }
+
+        @media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+        .glass-card {
+            position: relative; padding: 20px 20px 18px; border-radius: var(--radius-lg);
+            background: var(--glass-bg); border: 1px solid var(--border-glass); box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(var(--glass-blur)); overflow: hidden; transform: translateY(0) scale(1);
+            transition: transform 0.32s cubic-bezier(0.19, 1, 0.22, 1), box-shadow var(--transition-med), border-color var(--transition-med), background var(--transition-med);
+        }
+
+        .glass-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 26px 65px rgba(3, 10, 30, 0.95); border-color: rgba(78, 168, 255, 0.9); background: rgba(3, 12, 30, 0.92); }
+
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .section-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4; }
+
+        .user-info-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .u-avatar { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent); }
+
+        .btn-primary, .btn-logout, input[type="submit"] {
+            border: none; border-radius: 999px; padding: 8px 18px; font-size: 13px; font-weight: 500;
+            cursor: pointer; background: linear-gradient(135deg, #3b82f6, #4ea8ff); color: #f9fafb;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.7); transition: transform 0.16s ease-out, box-shadow 0.16s ease-out;
+        }
+
+        .btn-logout { background: linear-gradient(135deg, #ef4444, #fb7185); box-shadow: 0 10px 25px rgba(239, 68, 68, 0.7); }
+        form { display: flex; flex-direction: column; gap: 16px; }
+
+        .block-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .block-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+
+        .field-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 13px; color: var(--text-main); }
+        label span { color: var(--accent-strong); }
+
+        input, textarea, select {
+            width: 100%; padding: 8px 10px; border-radius: var(--radius-md);
+            border: 1px solid rgba(148, 163, 184, 0.5); background: rgba(15, 23, 42, 0.8);
+            color: var(--text-main); font-size: 13px; outline: none; transition: border-color 0.18s ease;
+        }
+
+        input[readonly] { background: rgba(15, 23, 42, 0.5); color: var(--text-muted); cursor: not-allowed; }
+        textarea { min-height: 80px; resize: vertical; }
+        .inline-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+        .question-text { font-size: 13px; margin-bottom: 4px; }
+        .submit-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+        footer { margin-top: 6px; font-size: 11px; color: var(--text-muted); text-align: right; }
     </style>
 </head>
 <body>
+<div class="page-wrap">
 
-<div class="container">
-    <div id="loading" style="text-align:center; padding-top:100px;">Проверка сессии...</div>
-
-    <div id="auth-screen" class="hidden">
-        <div class="auth-card">
-            <h1>Bogorodsk Portal</h1>
-            <p style="color: #94a3b8; margin-bottom: 25px;">Авторизуйтесь через Discord для доступа к анкете</p>
-            <button class="btn-discord" onclick="login()">ВОЙТИ В АККАУНТ</button>
-        </div>
-    </div>
-
-    <div id="app-screen" class="hidden">
-        <div class="user-card">
-            <img id="u-avatar" src="" class="avatar">
-            <div>
-                <strong id="u-name">...</strong>
-                <div id="u-id" style="font-size: 12px; color: var(--accent); font-family: monospace;">Загрузка ID...</div>
+    <header>
+        <div class="project-badge">Bogorodsk Portal · <span>Bogorodsk RolePlay</span></div>
+        <div class="header-main">
+            <div class="title-block">
+                <h1>Анкета в администрацию проекта</h1>
+                <p>Авторизуйтесь через Discord, заполните анкету и отправьте её на рассмотрение старшей администрации Bogorodsk RolePlay.</p>
             </div>
-            <button class="logout-btn" onclick="logout()">Выход</button>
+            <div class="status-chip">Набор в администрацию · анкета</div>
         </div>
+    </header>
 
-<form id="applyForm">
-    <div class="section-title">1. Личная информация</div>
+    <div id="loading" style="text-align:center; padding: 50px;">Проверка доступа...</div>
 
-    <div class="form-group">
-        <label>Ваш Discord.</label>
-        <input type="text" id="discordTag" readonly>
-    </div>
+    <main class="layout hidden" id="main-content">
+        <section>
+            <article class="glass-card" id="auth-screen">
+                <div class="section-title">Проверка сессии</div>
+                <p class="section-subtitle">Для доступа к анкете требуется авторизация через Discord.</p>
+                <button type="button" class="btn-primary" onclick="login()">ВОЙТИ В АККАУНТ</button>
+            </article>
 
-    <div class="form-group">
-        <label>Укажите ваше реальное имя.</label>
-        <input type="text" id="realName" required placeholder="Ваш ответ...">
-    </div>
+            <article class="glass-card hidden" id="user-info">
+                <div class="user-info-bar">
+                    <img id="u-avatar" src="" class="u-avatar">
+                    <div>
+                        <strong id="u-name">...</strong>
+                        <div id="u-id" style="font-size: 11px; color: var(--accent);">ID: ...</div>
+                    </div>
+                    <button class="btn-logout" style="margin-left:auto" onclick="logout()">Выход</button>
+                </div>
+            </article>
 
-    <div class="form-group">
-        <label>Укажите ваш реальный возраст (14+).</label>
-        <input type="number" id="age" min="14" required placeholder="Ваш ответ...">
-    </div>
+            <article class="glass-card hidden" id="form-card" style="margin-top: 14px;">
+                <form id="applyForm">
+                    <div class="block-title">1. Личная информация</div>
+                    <div class="block-subtitle">Заполните реальные данные. Они не будут переданы третьим лицам, но необходимы для связи и оценки вашей кандидатуры.</div>
 
-    <div class="form-group">
-        <label>Укажите ваш юзернейм для связи в Telegram.</label>
-        <input type="text" id="telegram" required placeholder="@nickname">
-    </div>
+                    <div class="field-group">
+                        <label>Ваш Discord <span>*</span></label>
+                        <input type="text" id="discordTag" readonly>
+                    </div>
 
-    <div class="form-group">
-        <label>Укажите ваш часовой пояс.</label>
-        <input type="text" id="timezone" required placeholder="Ваш ответ...">
-    </div>
+                    <div class="inline-fields">
+                        <div class="field-group">
+                            <label>Укажите ваше реальное имя <span>*</span></label>
+                            <input type="text" id="realName" required>
+                        </div>
+                        <div class="field-group">
+                            <label>Укажите ваш реальный возраст (14+) <span>*</span></label>
+                            <input type="number" id="age" min="14" max="99" required>
+                        </div>
+                    </div>
 
-    <div class="form-group">
-        <label>Имеете ли вы опыт в данной сфере, если да, то укажите где.</label>
-        <textarea id="experience" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="inline-fields">
+                        <div class="field-group">
+                            <label>Укажите ваш юзернейм для связи в Telegram</label>
+                            <input type="text" id="telegram" placeholder="@username" required>
+                        </div>
+                        <div class="field-group">
+                            <label>Укажите ваш часовой пояс</label>
+                            <input type="text" id="timezone" placeholder="MSK, GMT+3 и т.п." required>
+                        </div>
+                    </div>
 
-    <div class="form-group">
-        <label>Напишите автобиографию примерно в трёх предложениях.</label>
-        <textarea id="bio" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <label>Имеете ли вы опыт в данной сфере, если да, то укажите где</label>
+                        <textarea id="experience" placeholder="Опишите опыт работы в администрации / модерации на других проектах." required></textarea>
+                    </div>
 
-    <div class="section-title">2. Проверка знаний</div>
+                    <div class="field-group">
+                        <label>Напишите автобиографию примерно в трёх предложениях</label>
+                        <textarea id="bio" placeholder="Кратко расскажите о себе, своем характере и опыте." required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>Вы как администратор, находясь на своей смене заметили игрока оскорбляющего другого игрока по национальному признаку, что вы сделаете в данной ситуации?</label>
-        <textarea id="q1" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="block-title" style="margin-top: 10px;">2. Проверка знаний</div>
+                    <div class="block-subtitle">Ответьте на вопросы максимально подробно. Это поможет понять ваш уровень знаний RP и администрирования.</div>
 
-    <div class="form-group">
-        <label>Напишите определение: Что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</label>
-        <textarea id="q2" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">Вы как администратор, находясь на своей смене заметили игрока, оскорбляющего другого игрока по национальному признаку. Что вы сделаете в данной ситуации?</div>
+                        <textarea id="q1" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>Что означает термин MassDM? Приведите пример такой ситуации.</label>
-        <textarea id="q3" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">Напишите определение: что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</div>
+                        <textarea id="q2" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</label>
-        <textarea id="q4" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">Что означает термин MassDM? Приведите пример такой ситуации.</div>
+                        <textarea id="q3" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</label>
-        <textarea id="q5" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</div>
+                        <textarea id="q4" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</label>
-        <textarea id="q6" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</div>
+                        <textarea id="q5" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</label>
-        <textarea id="q7" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</div>
+                        <textarea id="q6" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</label>
-        <textarea id="q8" required placeholder="Ваш ответ..."></textarea>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</div>
+                        <textarea id="q7" required></textarea>
+                    </div>
 
-    <div class="form-group">
-        <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
-        <select id="resp" required>
-            <option value="" disabled selected>Выберите ответ</option>
-            <option value="Да, полностью понимаю">Да, полностью понимаю</option>
-            <option value="Нет">Нет</option>
-        </select>
-    </div>
+                    <div class="field-group">
+                        <div class="question-text">В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</div>
+                        <textarea id="q8" required></textarea>
+                    </div>
 
-    <button type="submit" class="submit-btn" id="subBtn">ОТПРАВИТЬ АНКЕТУ</button>
-</form>
-    </div>
+                    <div class="field-group">
+                        <label>Понимаете ли вы всю ответственность нахождения в администрации проекта?</label>
+                        <select id="resp" required>
+                            <option value="" disabled selected>Выберите ответ</option>
+                            <option value="Да, полностью понимаю">Да, полностью понимаю</option>
+                            <option value="Нет">Нет</option>
+                        </select>
+                    </div>
+
+                    <div class="submit-row">
+                        <input type="submit" id="subBtn" value="ОТПРАВИТЬ АНКЕТУ">
+                    </div>
+                </form>
+            </article>
+        </section>
+
+        <aside>
+            <article class="glass-card">
+                <div class="section-title">Памятка кандидату</div>
+                <ul style="font-size: 13px; color: var(--text-muted); padding-left: 18px; line-height: 1.6;">
+                    <li>Не спешите, отвечайте развёрнуто.</li>
+                    <li>Следите за грамотностью.</li>
+                </ul>
+            </article>
+        </aside>
+    </main>
+
+    <footer>Bogorodsk RolePlay · 2026</footer>
 </div>
 
 <script>
     const sb = supabase.createClient('https://vzfyzbkyrwqkcmfxvpkp.supabase.co', 'sb_publishable_NbOkK1X1xSUqN4ZQmBVjtg_wtAAEvtO');
-    // Ссылка ДОЛЖНА точно совпадать с тем, что в Supabase (проверь слэш в конце!)
     const REDIRECT = 'https://alekseylevkin88-tech.github.io/apply-bogorodsk-rp/';
 
-    async function login() {
-        await sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: REDIRECT } });
-    }
-
-    async function logout() {
-        await sb.auth.signOut();
-        window.location.href = REDIRECT;
-    }
+    async function login() { await sb.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: REDIRECT } }); }
+    async function logout() { await sb.auth.signOut(); window.location.href = REDIRECT; }
 
     sb.auth.onAuthStateChange((event, session) => {
         document.getElementById('loading').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+
         if (session) {
-            document.getElementById('app-screen').classList.remove('hidden');
             document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('form-card').classList.remove('hidden');
             
             const u = session.user.user_metadata;
-            // ВОТ ТУТ ТЕПЕРЬ ПРАВИЛЬНЫЙ ЦИФРОВОЙ ID
-            const dId = session.user.identities[0].id; 
+            const dId = session.user.identities[0].id;
             
             document.getElementById('u-name').innerText = u.full_name;
             document.getElementById('u-avatar').src = u.avatar_url;
@@ -188,14 +283,15 @@
             document.getElementById('discordTag').value = u.full_name;
         } else {
             document.getElementById('auth-screen').classList.remove('hidden');
-            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('form-card').classList.add('hidden');
         }
     });
 
     document.getElementById('applyForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('subBtn');
-        btn.disabled = true; btn.innerText = "ОТПРАВКА...";
+        btn.disabled = true; btn.value = "ОТПРАВКА...";
         
         const { data: { session } } = await sb.auth.getSession();
         const dId = session.user.identities[0].id;
@@ -208,11 +304,11 @@
                 fields: [
                     { name: "Discord", value: `${session.user.user_metadata.full_name}\nID: ${dId}`, inline: true },
                     { name: "Имя / Возраст", value: `${document.getElementById('realName').value} / ${document.getElementById('age').value}`, inline: true },
-                    { name: "TG / Час. пояс", value: `${document.getElementById('telegram').value} / ${document.getElementById('timezone').value}`, inline: true },
+                    { name: "TG / Пояс", value: `${document.getElementById('telegram').value} / ${document.getElementById('timezone').value}`, inline: true },
                     { name: "Опыт", value: document.getElementById('experience').value },
                     { name: "Автобиография", value: document.getElementById('bio').value },
-                    { name: "Знания (В1-В4)", value: `1: ${document.getElementById('q1').value}\n2: ${document.getElementById('q2').value}\n3: ${document.getElementById('q3').value}\n4: ${document.getElementById('q4').value}`.substring(0, 1024) },
-                    { name: "Знания (В5-В8)", value: `5: ${document.getElementById('q5').value}\n6: ${document.getElementById('q6').value}\n7: ${document.getElementById('q7').value}\n8: ${document.getElementById('q8').value}`.substring(0, 1024) },
+                    { name: "Ответы 1-4", value: `1: ${document.getElementById('q1').value}\n2: ${document.getElementById('q2').value}\n3: ${document.getElementById('q3').value}\n4: ${document.getElementById('q4').value}`.substring(0, 1024) },
+                    { name: "Ответы 5-8", value: `5: ${document.getElementById('q5').value}\n6: ${document.getElementById('q6').value}\n7: ${document.getElementById('q7').value}\n8: ${document.getElementById('q8').value}`.substring(0, 1024) },
                     { name: "Ответственность", value: document.getElementById('resp').value }
                 ],
                 timestamp: new Date()
@@ -226,4 +322,3 @@
 </script>
 </body>
 </html>
-
