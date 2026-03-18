@@ -112,13 +112,13 @@
 <div class="page-wrap">
 
     <header>
-        <div class="project-badge">Bogorodsk Portal · <span>Bogorodsk RolePlay</span></div>
+        <div class="project-badge"> <span>Bogorodsk RolePlay</span></div>
         <div class="header-main">
             <div class="title-block">
                 <h1>Анкета в администрацию проекта</h1>
-                <p>Авторизуйтесь через Discord, заполните анкету и отправьте её на рассмотрение старшей администрации Bogorodsk RolePlay.</p>
+                <p>Авторизуйтесь через Discord, заполните анкету и отправьте её на рассмотрение Старшей Администрации Bogorodsk RolePlay.</p>
             </div>
-            <div class="status-chip">Набор в администрацию · анкета</div>
+            <div class="status-chip">Набор в администрацию · Анкета</div>
         </div>
     </header>
 
@@ -156,11 +156,11 @@
                     <div class="inline-fields">
                         <div class="field-group">
                             <label>Укажите ваше реальное имя <span>*</span></label>
-                            <input type="text" id="realName" required>
+                            <input type="text" id="realName" placeholder="Ваш ответ..." required>
                         </div>
                         <div class="field-group">
                             <label>Укажите ваш реальный возраст (14+) <span>*</span></label>
-                            <input type="number" id="age" min="14" max="99" required>
+                            <input type="number" id="age" min="14" max="44" placeholder="Ваш ответ..." required>
                         </div>
                     </div>
 
@@ -171,7 +171,7 @@
                         </div>
                         <div class="field-group">
                             <label>Укажите ваш часовой пояс</label>
-                            <input type="text" id="timezone" placeholder="MSK, GMT+3 и т.п." required>
+                            <input type="text" id="timezone" placeholder="GMT+3 и т.п." required>
                         </div>
                     </div>
 
@@ -190,42 +190,42 @@
 
                     <div class="field-group">
                         <div class="question-text">Вы как администратор, находясь на своей смене заметили игрока, оскорбляющего другого игрока по национальному признаку. Что вы сделаете в данной ситуации?</div>
-                        <textarea id="q1" required></textarea>
+                        <textarea id="q1" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">Напишите определение: что такое OOC и IC информация? Приведите по одному примеру для каждого термина.</div>
-                        <textarea id="q2" required></textarea>
+                        <textarea id="q2" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">Что означает термин MassDM? Приведите пример такой ситуации.</div>
-                        <textarea id="q3" required></textarea>
+                        <textarea id="q3" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">Объясните понятие RolePlay убийство. Чем оно отличается от обычного убийства в игре?</div>
-                        <textarea id="q4" required></textarea>
+                        <textarea id="q4" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">Опишите ситуацию, в которой может произойти RevengeKill. Как следует поступить в такой ситуации?</div>
-                        <textarea id="q5" required></textarea>
+                        <textarea id="q5" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">К вам в игре обратились с жалобой на общение игрока. Опишите процесс расследования этой ситуации с точки зрения администратора, включая анализ чат-логов и общение с участниками RP-ситуации.</div>
-                        <textarea id="q6" required></textarea>
+                        <textarea id="q6" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">К вам поступила жалоба на игрока, который, по словам заявителя, нарушает правила проекта при взаимодействии с другими игроками. Опишите порядок вашего расследования и принятия решения по этой ситуации, учитывая вашу позицию OOC-администратора.</div>
-                        <textarea id="q7" required></textarea>
+                        <textarea id="q7" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
                         <div class="question-text">В ходе RP-ситуации сотрудник МВД не выполнил обязательную отыгровку взятия в наручники. Задержанный указал на это нарушение и обвинил сотрудника МВД в НРП-поведении. В ответ сотрудник МВД настаивает, что отыгровку он выполнил. Как следует действовать администратору в такой ситуации согласно общим RP-понятиям и правилам проекта?</div>
-                        <textarea id="q8" required></textarea>
+                        <textarea id="q8" placeholder="Ваш ответ..." required></textarea>
                     </div>
 
                     <div class="field-group">
@@ -255,7 +255,7 @@
         </aside>
     </main>
 
-    <footer>Bogorodsk RolePlay · 2026</footer>
+    <footer>Bogorodsk RolePlay</footer>
 </div>
 
 <script>
@@ -316,7 +316,7 @@
         };
 
         await fetch(hook, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(msg) });
-        alert("Анкета отправлена!");
+        alert("Анкета была успешно отправлена!");
         location.reload();
     };
 </script>
